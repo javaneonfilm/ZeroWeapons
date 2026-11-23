@@ -1,0 +1,6 @@
+target/
+test-server/
+srv.sh
+*.jar
+.idea/
+*.iml

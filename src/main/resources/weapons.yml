@@ -1,0 +1,227 @@
+# ══════════════════════════════════════════════════════════════
+#   Z E R O W E A P O N S
+#
+#   Hand them out with /weapons give <weapon> [player].
+#   A cooldown shows as the sweep over the item.
+#
+#   Names are bold small caps in a gradient: <bold><gradient:#start:#end>ɴᴀᴍᴇ</gradient></bold>
+#
+#   What the tooltip says, top to bottom:
+#     name       the item's name
+#     enchants   listed for you, levels in white (unbreaking and mending are left out on
+#                unbreakable weapons, where they do nothing)
+#     ability    the ability's name, in the weapon's colour
+#     use        how it goes off: "shift + right click", "15% of hits", "on hit"
+#     does       what it does. \n starts a second line; keep it to two.
+#                Put {curly brackets} around a number to make it stand out: "for {2s}"
+#     cooldown   added for you when it's above 0
+#   Write ability, use and does in normal lowercase. Small caps and colours are added for you.
+#   /weapons reload picks up changes. Items already handed out keep their old tooltip.
+# ══════════════════════════════════════════════════════════════
+
+weapons:
+
+  # ─── DASH SWORD ────────────────────────────────── #D9A6FF
+  dash_sword:
+    enabled: true
+    material: NETHERITE_SWORD
+    name: "<bold><gradient:#D9A6FF:#8C00F6>ᴅᴀꜱʜ ꜱᴡᴏʀᴅ</gradient></bold>"
+    ability: "dash"
+    use: "shift + right click"
+    does: "dash where you're looking"
+    unbreakable: true
+    cooldown: 30
+    dash_power: 1.9
+    # Clamp on the vertical component so looking straight up isn't a launch pad.
+    max_vertical: 0.6
+    enchants:
+      sharpness: 5
+      fire_aspect: 2
+  # ─── VORTEX SWORD ─────────────────────────────── #D07CFF
+  # The Bolt Sword's idea in black and purple: a spiral strike comes down on them.
+  vortex_sword:
+    enabled: true
+    material: NETHERITE_SWORD
+    name: "<bold><gradient:#D07CFF:#3D0066>ᴠᴏʀᴛᴇx ꜱᴡᴏʀᴅ</gradient></bold>"
+    ability: "spiral slash"
+    use: "15% of hits"
+    does: "a void spiral hits them for {1 heart}"
+    unbreakable: true
+    cooldown: 0
+    strike_chance_percent: 15
+    # 1.0 = half a heart.
+    strike_damage: 2.0
+    # true: goes through armour. false: armour soaks it like a normal hit.
+    ignore_armour: true
+    enchants:
+      sharpness: 5
+      fire_aspect: 2
+
+  # ─── NULLBLADE ────────────────────────────────── #E3E8EF
+  # 3 hits in a row on one player: their custom weapons do nothing special for a bit
+  # (no shift + right click, no on-hit procs, no bow tricks). A miss or a new target resets it.
+  nullblade:
+    enabled: true
+    material: NETHERITE_SWORD
+    name: "<bold><gradient:#E3E8EF:#6B7280>ɴᴜʟʟʙʟᴀᴅᴇ</gradient></bold>"
+    ability: "ability break"
+    use: "3 hits in a row"
+    does: "their abilities stop for {2s}"
+    unbreakable: true
+    # After a lock, so it can't be chained forever. 0 = no cooldown.
+    cooldown: 10
+    hits_needed: 3
+    lock_seconds: 2.0
+    # Longest pause between hits that still counts as in a row.
+    combo_window_seconds: 2.5
+    enchants:
+      sharpness: 5
+      fire_aspect: 2
+
+  # ─── OVERDRIVE ────────────────────────────────── #6BFFF2
+  # Each hit in a row on the same player adds a bit of speed. A miss, a new target,
+  # putting it away or a pause takes it all off.
+  overdrive:
+    enabled: true
+    material: NETHERITE_SWORD
+    name: "<bold><gradient:#6BFFF2:#0091FF>ᴏᴠᴇʀᴅʀɪᴠᴇ</gradient></bold>"
+    ability: "momentum"
+    use: "hits in a row"
+    does: "each hit makes you a bit faster\nmiss or switch target and it resets"
+    unbreakable: true
+    cooldown: 0
+    # 0.04 = +4% walk speed per hit.
+    speed_per_hit: 0.04
+    max_stacks: 5
+    combo_window_seconds: 3.0
+    enchants:
+      sharpness: 5
+      fire_aspect: 2
+
+  # ─── DREADCLEAVER ─────────────────────────────── #FF6B6B
+  # Every third hit on the same player is a heavy one. Misses don't reset it, a new target does.
+  dreadcleaver:
+    enabled: true
+    material: NETHERITE_AXE
+    name: "<bold><gradient:#FF6B6B:#7A0010>ᴅʀᴇᴀᴅᴄʟᴇᴀᴠᴇʀ</gradient></bold>"
+    ability: "heavy impact"
+    use: "every 3rd hit"
+    does: "big knockback and slowness for {1.5s}"
+    unbreakable: true
+    cooldown: 0
+    every_hits: 3
+    reset_after_seconds: 5.0
+    knockback: 1.3
+    knockback_up: 0.45
+    slow_seconds: 1.5
+    slow_level: 2
+    enchants:
+      sharpness: 5
+
+  # ─── LIFESTEAL AXE ────────────────────────────── #FF9EB0
+  # Every second crit takes hearts off them (through armour) and gives them to you.
+  lifesteal_axe:
+    enabled: true
+    material: NETHERITE_AXE
+    name: "<bold><gradient:#FF9EB0:#E0002B>ʟɪꜰᴇꜱᴛᴇᴀʟ ᴀxᴇ</gradient></bold>"
+    ability: "heart steal"
+    use: "every 2nd crit"
+    does: "steal {1.5 hearts} from them"
+    unbreakable: true
+    cooldown: 0
+    crits_needed: 2
+    steal_hearts: 1.5
+    enchants:
+      sharpness: 5
+
+  # ─── COB AXE ──────────────────────────────────── #FFFFFF
+  # Hitting a web with it pops it instantly; shift + right click clears every web around you.
+  # Map webs grow back after regrow_seconds (never inside a player). 0 = they stay gone.
+  cob_axe:
+    enabled: true
+    material: NETHERITE_AXE
+    name: "<bold><gradient:#FFFFFF:#9A9A9A>ᴄᴏʙ ᴀxᴇ</gradient></bold>"
+    ability: "web cutter"
+    use: "hit a web / shift + right click"
+    does: "webs break instantly\nclears webs {4 blocks} around you"
+    unbreakable: true
+    cooldown: 15
+    clear_radius: 4
+    regrow_seconds: 20
+    enchants:
+      sharpness: 5
+
+  # ─── VOIDCHOPPER ──────────────────────────────── #7A9CFF
+  # A hit locks their golden apples (the vanilla sweep shows on them). Then a cooldown.
+  voidchopper:
+    enabled: true
+    material: NETHERITE_AXE
+    name: "<bold><gradient:#7A9CFF:#1B2A80>ᴠᴏɪᴅᴄʜᴏᴘᴘᴇʀ</gradient></bold>"
+    ability: "starve"
+    use: "on hit"
+    does: "no gaps for {3s}"
+    unbreakable: true
+    cooldown: 15
+    lock_seconds: 3.0
+    enchants:
+      sharpness: 5
+
+  # ─── SPLITSHOT ────────────────────────────────── #FFB3F0
+  # A full draw splits into three mid-flight. Only the middle arrow can be picked up.
+  splitshot:
+    enabled: true
+    material: BOW
+    name: "<bold><gradient:#FFB3F0:#FF3DA8>ꜱᴘʟɪᴛꜱʜᴏᴛ</gradient></bold>"
+    ability: "split"
+    use: "full draw"
+    does: "arrow splits into {3}, each hits harder"
+    unbreakable: true
+    cooldown: 0
+    # 1.0 = a full draw.
+    min_draw: 0.95
+    split_after_ticks: 3
+    spread_degrees: 7.0
+    damage_multiplier: 1.25
+    enchants:
+      power: 5
+
+  # ─── FLAMING BOW ──────────────────────────────── #FFD36B
+  # Burns harder than normal fire, and the extra burn goes through fire resistance and armour.
+  # Water puts it out.
+  flaming_bow:
+    enabled: true
+    material: BOW
+    name: "<bold><gradient:#FFD36B:#FF3D00>ꜰʟᴀᴍɪɴɢ ʙᴏᴡ</gradient></bold>"
+    ability: "hellfire"
+    use: "on hit"
+    does: "sets them on fire for {4s}\nfire res doesn't help"
+    unbreakable: true
+    cooldown: 0
+    burn_seconds: 4
+    # Extra damage each second on top of normal fire. 1.0 = half a heart.
+    burn_damage: 1.0
+    enchants:
+      power: 5
+
+  # ─── CURVE SHOT ───────────────────────────────── #C4FF7A
+  # Arrows hit harder and bend toward the closest player in front of them.
+  curve_shot:
+    enabled: true
+    material: BOW
+    name: "<bold><gradient:#C4FF7A:#00A86B>ᴄᴜʀᴠᴇ ꜱʜᴏᴛ</gradient></bold>"
+    ability: "homing"
+    use: "every shot"
+    does: "arrows curve to the closest player"
+    unbreakable: true
+    cooldown: 0
+    damage_multiplier: 1.2
+    # Weaker draws than this fly straight.
+    min_draw: 0.6
+    homing_range: 20.0
+    # How hard it turns each tick, 0 to 1.
+    turn_strength: 0.35
+    homing_ticks: 60
+    # How far off its path a player can be and still get locked onto.
+    cone_degrees: 70.0
+    enchants:
+      power: 4

@@ -1,0 +1,16 @@
+name: ZeroWeapons
+version: 1.0.0
+main: dev.cuda.zeroweapons.ZeroWeapons
+api-version: '1.21'
+author: cuda
+description: Custom swords, axes and bows with abilities.
+softdepend: [WorldGuard]
+commands:
+  weapons:
+    description: Give, list and reload custom weapons.
+    usage: /weapons <give|list|reload> [weapon] [player]
+    permission: zeroweapons.admin
+permissions:
+  zeroweapons.admin:
+    description: Use /weapons.
+    default: op

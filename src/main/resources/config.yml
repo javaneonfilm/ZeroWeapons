@@ -1,0 +1,17 @@
+# ZeroWeapons
+# Weapons themselves are set up in weapons.yml.
+
+# Worlds where custom weapons do nothing (abilities off, hits with them cancelled). E.g. a lobby.
+disabled-worlds: []
+
+# A WorldGuard region (by name) that counts the same, e.g. "spawn". Empty = off.
+# Only used when WorldGuard is installed.
+safe-region: ""
+
+messages:
+  spawn-region: "<color:#AAAAAA>ʏᴏᴜ ᴄᴀɴ'ᴛ ᴜꜱᴇ ᴛʜɪꜱ ʜᴇʀᴇ</color>"
+  # {time} = seconds left.
+  on-cooldown: "<color:#AAAAAA>ᴏɴ ᴄᴏᴏʟᴅᴏᴡɴ <color:#FFFFFF><bold>{time}s</bold></color></color>"
+
+# Logs bow shots, splits and homing locks to the console. For testing only.
+debug: false
