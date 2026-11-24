@@ -36,7 +36,11 @@ public class CooldownManager {
             .put(type, System.currentTimeMillis() + seconds * 1000L);
     }
 
-    public void removePlayer(UUID uuid) {
-        this.cooldowns.remove(uuid);
+    public void purgeExpired() {
+        long now = System.currentTimeMillis();
+        this.cooldowns.values().removeIf(perWeapon -> {
+            perWeapon.values().removeIf(expiry -> expiry <= now);
+            return perWeapon.isEmpty();
+        });
     }
 }

@@ -55,7 +55,7 @@ public final class ZeroWeapons extends JavaPlugin implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         java.util.UUID playerId = event.getPlayer().getUniqueId();
-        this.cooldownManager.removePlayer(playerId);
+        this.cooldownManager.purgeExpired();
         for (var weapon : this.weaponManager.getWeapons().values()) weapon.forgetPlayer(playerId);
     }
 
