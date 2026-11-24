@@ -2,7 +2,6 @@ package dev.cuda.zeroweapons.weapons.weapons;
 
 import dev.cuda.zeroweapons.ZeroWeapons;
 import dev.cuda.zeroweapons.weapons.WeaponType;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -12,7 +11,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -39,12 +37,10 @@ public abstract class CustomWeapon {
         this.type = type;
         this.weaponKey = new NamespacedKey(plugin, "weapon_type");
         this.cooldownKey = new NamespacedKey(plugin, "cooldown_" + type.configKey());
-        this.reloadConfig();
     }
 
-    public void reloadConfig() {
-        File file = new File(this.plugin.getDataFolder(), "weapons.yml");
-        this.cfg = YamlConfiguration.loadConfiguration(file).getConfigurationSection("weapons." + this.type.configKey());
+    public void reloadConfig(ConfigurationSection section) {
+        this.cfg = section;
     }
 
     public WeaponType getType() {
