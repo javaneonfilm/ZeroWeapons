@@ -90,6 +90,7 @@ public abstract class CustomWeapon {
         String materialName = this.cfg.getString("material", "NETHERITE_SWORD");
         try {
             mat = Material.valueOf(materialName);
+            if (!mat.isItem() || mat.isAir()) throw new IllegalArgumentException(materialName);
         } catch (IllegalArgumentException e) {
             this.plugin.getLogger().warning("Invalid material '" + materialName + "' for weapon " + this.type.configKey());
             mat = Material.NETHERITE_SWORD;
