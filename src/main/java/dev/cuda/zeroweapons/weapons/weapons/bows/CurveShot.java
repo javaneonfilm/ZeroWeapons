@@ -8,7 +8,6 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.AbstractArrow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -78,8 +77,8 @@ public class CurveShot extends BowWeapon {
                 forward.normalize();
                 Player best = null;
                 double bestDist = range * range;
-                for (Entity near : at.getWorld().getNearbyEntities(at, range, range, range)) {
-                    if (!(near instanceof Player p) || p.equals(arrow.getShooter())) continue;
+                for (Player p : at.getWorld().getNearbyPlayers(at, range)) {
+                    if (p.equals(arrow.getShooter())) continue;
                     if (!TargetUtils.targetable(p) || RegionUtils.isInRegion(p, spawn)) continue;
                     Vector to = p.getLocation().add(0, p.getHeight() * 0.6, 0).toVector().subtract(at.toVector());
                     double dist = to.lengthSquared();

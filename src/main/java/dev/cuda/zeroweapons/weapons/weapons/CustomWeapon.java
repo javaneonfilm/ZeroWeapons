@@ -11,7 +11,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -77,6 +76,9 @@ public abstract class CustomWeapon {
     public void onShutdown() {
     }
 
+    public void forgetPlayer(java.util.UUID playerId) {
+    }
+
     public void onHit(Player player, Entity victim, EntityDamageByEntityEvent event) {
     }
 
@@ -98,7 +100,7 @@ public abstract class CustomWeapon {
         meta.displayName(MM.deserialize(nameMM).decoration(TextDecoration.ITALIC, false));
         meta.lore(this.buildLore());
         for (var e : this.enchants().entrySet()) {
-            Enchantment ench = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(e.getKey()));
+            Enchantment ench = io.papermc.paper.registry.RegistryAccess.registryAccess().getRegistry(io.papermc.paper.registry.RegistryKey.ENCHANTMENT).get(NamespacedKey.minecraft(e.getKey()));
             if (ench != null) {
                 meta.addEnchant(ench, e.getValue(), true);
             } else {
@@ -222,7 +224,7 @@ public abstract class CustomWeapon {
 
     /** The vanilla cooldown group this weapon's items belong to. */
     public NamespacedKey cooldownKey() {
-        return new NamespacedKey(this.plugin, "cooldown_" + this.type.configKey());
+        return this.cooldownKey;
     }
 
     /**
