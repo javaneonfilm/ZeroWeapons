@@ -108,6 +108,10 @@ public class CobAxe extends CustomWeapon implements Listener {
             var entry = it.next();
             if (now < entry.getValue()) continue;
             Location at = entry.getKey();
+            if (!at.isWorldLoaded()) {
+                it.remove();
+                continue;
+            }
             if (!at.isChunkLoaded()) continue;
             Block block = at.getBlock();
             if (!block.getType().isAir()) {
@@ -132,7 +136,7 @@ public class CobAxe extends CustomWeapon implements Listener {
     @Override
     public void onShutdown() {
         for (Location at : this.regrow.keySet()) {
-            if (at.getBlock().getType().isAir()) at.getBlock().setType(Material.COBWEB);
+            if (at.isWorldLoaded() && at.getBlock().getType().isAir()) at.getBlock().setType(Material.COBWEB);
         }
         this.regrow.clear();
     }
