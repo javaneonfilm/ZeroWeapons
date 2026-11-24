@@ -53,20 +53,26 @@ public class Overdrive extends CustomWeapon implements Listener {
         if (!(victim instanceof Player)) return;
         int count = WeaponStates.hit(player, victim, this.type, this.window());
         int stacks = Math.min(count, Math.max(1, this.cfg.getInt("max_stacks", 5)));
-        this.apply(player, stacks);
-        player.getWorld().spawnParticle(Particle.DUST, player.getLocation().add(0, 0.2, 0), 4 + stacks * 2, 0.3, 0.05, 0.3, 0.0, CYAN);
+        int max = Math.max(1, this.cfg.getInt("max_stacks", 5));
+        if (this.apply(player, stacks)) {
+            dev.cuda.zeroweapons.fx.WeaponFx.overdriveStack(player, stacks, max);
+        } else {
+            player.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, player.getLocation().add(0, 0.6, 0), 4, 0.3, 0.3, 0.3, 0.1);
+        }
         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 0.5f, 0.8f + stacks * 0.15f);
     }
 
-    private void apply(Player player, int stacks) {
+    /** True when the stack count changed. */
+    private boolean apply(Player player, int stacks) {
         Integer had = this.boosted.get(player.getUniqueId());
-        if (had != null && had == stacks) return;
+        if (had != null && had == stacks) return false;
         AttributeInstance speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
-        if (speed == null) return;
+        if (speed == null) return false;
         speed.removeModifier(this.speedKey);
         double per = this.cfg.getDouble("speed_per_hit", 0.04);
         speed.addTransientModifier(new AttributeModifier(this.speedKey, per * stacks, AttributeModifier.Operation.ADD_SCALAR));
         this.boosted.put(player.getUniqueId(), stacks);
+        return true;
     }
 
     private void clear(Player player) {
@@ -78,9 +84,11 @@ public class Overdrive extends CustomWeapon implements Listener {
     /** Takes the speed off anyone whose streak ended or who isn't holding the sword now. */
     private void tick() {
         if (this.boosted.isEmpty()) return;
-        Iterator<UUID> it = this.boosted.keySet().iterator();
+        int max = Math.max(1, this.cfg.getInt("max_stacks", 5));
+        Iterator<Map.Entry<UUID, Integer>> it = this.boosted.entrySet().iterator();
         while (it.hasNext()) {
-            Player player = this.plugin.getServer().getPlayer(it.next());
+            Map.Entry<UUID, Integer> entry = it.next();
+            Player player = this.plugin.getServer().getPlayer(entry.getKey());
             if (player == null) {
                 it.remove();
                 continue;
@@ -90,7 +98,10 @@ public class Overdrive extends CustomWeapon implements Listener {
                 it.remove();
                 AttributeInstance speed = player.getAttribute(Attribute.MOVEMENT_SPEED);
                 if (speed != null) speed.removeModifier(this.speedKey);
+                if (!player.isDead()) dev.cuda.zeroweapons.fx.WeaponFx.overdriveFizzle(player);
+                continue;
             }
+            dev.cuda.zeroweapons.fx.WeaponFx.overdriveTrail(player, entry.getValue(), max);
         }
     }
 

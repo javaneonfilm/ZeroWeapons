@@ -54,10 +54,7 @@ public class DashWeapon extends CustomWeapon {
         player.setVelocity(direction.normalize().multiply(power));
 
         playDashSound(this.plugin, player.getLocation());
-        player.getWorld().spawnParticle(Particle.SCULK_SOUL, player.getLocation().add(0.0, 0.6, 0.0),
-            10, 0.25, 0.2, 0.25, 0.02);
-        player.getWorld().spawnParticle(Particle.CLOUD, player.getLocation().add(0.0, 0.4, 0.0),
-            14, 0.25, 0.15, 0.25, 0.03);
+        dev.cuda.zeroweapons.fx.WeaponFx.dash(player, direction);
         return true;
     }
 

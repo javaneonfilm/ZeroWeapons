@@ -33,7 +33,10 @@ public class LifestealAxe extends CustomWeapon {
         if (!(victim instanceof LivingEntity living) || !event.isCritical()) return;
         int needed = Math.max(1, this.cfg.getInt("crits_needed", 2));
         int count = this.crits.merge(player.getUniqueId(), 1, Integer::sum);
-        if (count < needed) return;
+        if (count < needed) {
+            dev.cuda.zeroweapons.fx.WeaponFx.leechDrip(living);
+            return;
+        }
         this.crits.remove(player.getUniqueId());
 
         double steal = this.cfg.getDouble("steal_hearts", 1.5) * 2.0;
@@ -47,8 +50,7 @@ public class LifestealAxe extends CustomWeapon {
         double cap = max != null ? max.getValue() : 20.0;
         player.setHealth(Math.min(cap, player.getHealth() + taken));
 
-        living.getWorld().spawnParticle(Particle.DAMAGE_INDICATOR, living.getLocation().add(0, 1.2, 0), 6, 0.3, 0.3, 0.3, 0.1);
-        player.getWorld().spawnParticle(Particle.HEART, player.getLocation().add(0, 1.9, 0), 3, 0.3, 0.2, 0.3, 0.0);
+        dev.cuda.zeroweapons.fx.WeaponFx.leechSteal(living, player);
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WITCH_DRINK, 0.7f, 1.3f);
         Msg.actionBar(player, Palette.b(Palette.LEECH, "LIFESTEAL")
             + " <color:" + Palette.INK + ">+" + String.format("%.1f", taken / 2.0) + " " + Palette.sc("hearts") + "</color>");

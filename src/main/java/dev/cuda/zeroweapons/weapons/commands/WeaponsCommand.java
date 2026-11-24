@@ -52,6 +52,8 @@ public class WeaponsCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(Msg.parse(""));
             }
             case "reload" -> {
+                this.plugin.reloadConfig();
+                dev.cuda.zeroweapons.fx.Fx.reload();
                 this.plugin.getWeaponManager().reload();
                 Msg.replySuccess(sender, Palette.sc("Weapon configuration reloaded."));
             }

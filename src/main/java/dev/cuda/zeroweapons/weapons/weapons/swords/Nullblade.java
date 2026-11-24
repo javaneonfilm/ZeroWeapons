@@ -34,7 +34,10 @@ public class Nullblade extends CustomWeapon {
 
         int needed = Math.max(1, this.cfg.getInt("hits_needed", 3));
         int count = WeaponStates.hit(player, target, this.type, this.cfg.getDouble("combo_window_seconds", 2.5));
-        if (count < needed) return;
+        if (count < needed) {
+            dev.cuda.zeroweapons.fx.WeaponFx.nullMark(target, count);
+            return;
+        }
         WeaponStates.resetCombo(player);
 
         int ticks = (int) Math.round(this.cfg.getDouble("lock_seconds", 2.0) * 20);
@@ -42,8 +45,7 @@ public class Nullblade extends CustomWeapon {
         this.showLock(target, ticks);
 
         target.getWorld().playSound(target.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 1.0f, 1.6f);
-        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1.0, 0), 30, 0.35, 0.6, 0.35, 0.0, GREY);
-        target.getWorld().spawnParticle(Particle.SMOKE, target.getLocation().add(0, 1.2, 0), 12, 0.3, 0.4, 0.3, 0.01);
+        dev.cuda.zeroweapons.fx.WeaponFx.nullLock(target, ticks);
         String secs = String.format("%.0f", ticks / 20.0);
         Msg.actionBar(player, Palette.b(Palette.NULL, "NULLED")
             + " <color:" + Palette.INK + ">" + target.getName() + " " + secs + "s</color>");

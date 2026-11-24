@@ -1,5 +1,5 @@
 name: ZeroWeapons
-version: 1.0.0
+version: 1.1.0
 main: dev.cuda.zeroweapons.ZeroWeapons
 api-version: '1.21'
 author: cuda

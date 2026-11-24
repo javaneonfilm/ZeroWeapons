@@ -35,20 +35,23 @@ public class FlamingBow extends BowWeapon {
     @Override
     protected void onShoot(Player shooter, AbstractArrow arrow, float force) {
         arrow.setFireTicks(2000);
+        dev.cuda.zeroweapons.fx.WeaponFx.flameTrail(arrow);
     }
 
     @Override
     protected void onArrowHit(Player shooter, AbstractArrow arrow, LivingEntity victim, EntityDamageByEntityEvent event) {
         int seconds = Math.max(1, this.cfg.getInt("burn_seconds", 4));
         double perSecond = this.cfg.getDouble("burn_damage", 1.0);
+        boolean hellfire = victim.hasPotionEffect(org.bukkit.potion.PotionEffectType.FIRE_RESISTANCE);
         victim.setFireTicks(Math.max(victim.getFireTicks(), seconds * 20));
         victim.setVisualFire(net.kyori.adventure.util.TriState.TRUE);
         victim.getWorld().playSound(victim.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1.0f, 0.9f);
-        victim.getWorld().spawnParticle(Particle.FLAME, victim.getLocation().add(0, 1.0, 0), 20, 0.3, 0.5, 0.3, 0.03);
+        dev.cuda.zeroweapons.fx.WeaponFx.flameIgnite(victim, hellfire);
 
         boolean running = this.burning.containsKey(victim.getUniqueId());
         this.burning.put(victim.getUniqueId(), System.currentTimeMillis() + seconds * 1000L);
         if (running) return;
+        dev.cuda.zeroweapons.fx.WeaponFx.flameBurn(victim, hellfire, () -> this.burning.containsKey(victim.getUniqueId()));
 
         new BukkitRunnable() {
             @Override
@@ -64,7 +67,6 @@ public class FlamingBow extends BowWeapon {
                     return;
                 }
                 trueDamage(victim, perSecond, shooter);
-                victim.getWorld().spawnParticle(Particle.FLAME, victim.getLocation().add(0, 1.0, 0), 8, 0.25, 0.4, 0.25, 0.02);
             }
         }.runTaskTimer(this.plugin, 20L, 20L);
     }

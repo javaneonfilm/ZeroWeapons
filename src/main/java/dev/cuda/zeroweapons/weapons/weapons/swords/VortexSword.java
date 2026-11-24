@@ -38,45 +38,8 @@ public class VortexSword extends CustomWeapon {
         } else {
             dealAbilityDamage(living, damage, player);
         }
-        this.spiral(living);
-    }
-
-    /** Two twisting strands, black and purple, coming down onto them. */
-    private void spiral(LivingEntity target) {
-        World world = target.getWorld();
-        world.playSound(target.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 0.9f, 0.6f);
-        world.playSound(target.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.5f, 0.7f);
-        new BukkitRunnable() {
-            int step = 0;
-            final int steps = 5;
-            final double top = 4.0;
-
-            @Override
-            public void run() {
-                if (this.step >= this.steps || !target.isValid()) {
-                    Location feet = target.getLocation();
-                    world.spawnParticle(Particle.SQUID_INK, feet.clone().add(0, 0.2, 0), 16, 0.4, 0.05, 0.4, 0.06);
-                    world.spawnParticle(Particle.REVERSE_PORTAL, feet.clone().add(0, 1.0, 0), 30, 0.3, 0.6, 0.3, 0.08);
-                    world.spawnParticle(Particle.DUST, feet.clone().add(0, 0.1, 0), 24, 0.6, 0.02, 0.6, 0.0, PURPLE);
-                    this.cancel();
-                    return;
-                }
-                Location base = target.getLocation();
-                // Each tick draws one slice of the spiral, top to bottom.
-                double from = this.top * (1.0 - (double) this.step / this.steps);
-                double to = this.top * (1.0 - (double) (this.step + 1) / this.steps);
-                for (double y = from; y >= to; y -= 0.12) {
-                    double angle = y * 3.2;
-                    double radius = 0.25 + 0.15 * y;
-                    for (int strand = 0; strand < 2; strand++) {
-                        double a = angle + strand * Math.PI;
-                        world.spawnParticle(Particle.DUST,
-                            base.getX() + Math.cos(a) * radius, base.getY() + y, base.getZ() + Math.sin(a) * radius,
-                            1, 0, 0, 0, 0, strand == 0 ? BLACK : PURPLE);
-                    }
-                }
-                this.step++;
-            }
-        }.runTaskTimer(this.plugin, 0L, 1L);
+        living.getWorld().playSound(living.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, 0.9f, 0.6f);
+        living.getWorld().playSound(living.getLocation(), Sound.ENTITY_WITHER_SHOOT, 0.5f, 0.7f);
+        dev.cuda.zeroweapons.fx.WeaponFx.vortex(living);
     }
 }

@@ -29,6 +29,7 @@ public class Splitshot extends BowWeapon {
         if (force < this.cfg.getDouble("min_draw", 0.95)) {
             return;
         }
+        dev.cuda.zeroweapons.fx.WeaponFx.splitTrail(arrow, false);
         int delay = Math.max(1, this.cfg.getInt("split_after_ticks", 3));
         this.plugin.getServer().getScheduler().runTaskLater(this.plugin, () -> this.split(shooter, arrow, multiplier), delay);
     }
@@ -40,10 +41,12 @@ public class Splitshot extends BowWeapon {
         double spread = Math.toRadians(this.cfg.getDouble("spread_degrees", 7.0));
         double damage = arrow.getDamage() * multiplier;
 
+        java.util.List<Vector> dirs = new java.util.ArrayList<>();
         for (int i = -1; i <= 1; i++) {
             Vector dir = velocity.clone().rotateAroundY(spread * i);
+            dirs.add(dir);
             boolean middle = i == 0;
-            at.getWorld().spawn(at, Arrow.class, child -> {
+            Arrow spawned = at.getWorld().spawn(at, Arrow.class, child -> {
                 child.setShooter(shooter);
                 child.setVelocity(dir);
                 child.setDamage(damage);
@@ -54,10 +57,11 @@ public class Splitshot extends BowWeapon {
                 // Tagged as this bow's, but split children never split again: only onShoot splits.
                 this.tag(child);
             });
+            dev.cuda.zeroweapons.fx.WeaponFx.splitTrail(spawned, true);
         }
         arrow.remove();
         if (this.plugin.getConfig().getBoolean("debug")) this.plugin.getLogger().info("DBG split into 3");
-        at.getWorld().spawnParticle(Particle.DUST, at, 14, 0.2, 0.2, 0.2, 0.0, PINK);
+        dev.cuda.zeroweapons.fx.WeaponFx.splitFlash(at, velocity, dirs);
         at.getWorld().playSound(at, Sound.ENTITY_ARROW_SHOOT, 0.8f, 1.6f);
     }
 }

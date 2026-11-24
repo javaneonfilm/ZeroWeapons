@@ -41,6 +41,7 @@ public class Dreadcleaver extends CustomWeapon {
         int every = Math.max(1, this.cfg.getInt("every_hits", 3));
         if (hits < every) {
             this.counts.put(player.getUniqueId(), new Count(victim.getUniqueId(), hits, now));
+            if (hits == every - 1) dev.cuda.zeroweapons.fx.WeaponFx.dreadCharge(player);
             return;
         }
         this.counts.remove(player.getUniqueId());
@@ -63,7 +64,7 @@ public class Dreadcleaver extends CustomWeapon {
         living.getWorld().playSound(living.getLocation(), Sound.ITEM_MACE_SMASH_GROUND_HEAVY, 1.0f, 0.8f);
         living.getWorld().playSound(living.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1.0f, 0.6f);
         living.getWorld().spawnParticle(Particle.EXPLOSION, living.getLocation().add(0, 1.0, 0), 1);
-        living.getWorld().spawnParticle(Particle.CRIT, living.getLocation().add(0, 1.0, 0), 25, 0.4, 0.5, 0.4, 0.3);
+        dev.cuda.zeroweapons.fx.WeaponFx.dreadSlam(living, player);
     }
 
     @Override

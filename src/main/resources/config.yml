@@ -13,5 +13,13 @@ messages:
   # {time} = seconds left.
   on-cooldown: "<color:#AAAAAA>ᴏɴ ᴄᴏᴏʟᴅᴏᴡɴ <color:#FFFFFF><bold>{time}s</bold></color></color>"
 
+visuals:
+  # Turn every ability visual off (sounds stay).
+  enabled: true
+  # Particle amount. 1.0 = full, 0.5 = half (low-end servers or crowded fights), up to 2.0.
+  quality: 1.0
+  # Floating blocks and items (Dreadcleaver chunks, Vortex spikes, Voidchopper apple, Nullblade tag).
+  display-entities: true
+
 # Logs bow shots, splits and homing locks to the console. For testing only.
 debug: false

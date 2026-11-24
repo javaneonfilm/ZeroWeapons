@@ -8,6 +8,8 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
@@ -59,8 +61,10 @@ public class CurveShot extends BowWeapon {
                 }
                 if (this.target == null) {
                     this.target = this.pick(at, velocity);
+                    if (this.target != null) dev.cuda.zeroweapons.fx.WeaponFx.curveLock(this.target, shooter);
                     if (this.target != null && CurveShot.this.plugin.getConfig().getBoolean("debug")) CurveShot.this.plugin.getLogger().info("DBG curve lock " + this.target.getName() + " age=" + this.age);
                 }
+                dev.cuda.zeroweapons.fx.WeaponFx.curveTick(arrow, this.target, this.age);
                 if (this.target == null) return;
 
                 Vector aim = this.target.getLocation().add(0, this.target.getHeight() * 0.6, 0).toVector()
@@ -68,7 +72,6 @@ public class CurveShot extends BowWeapon {
                 if (aim.lengthSquared() < 1.0E-4) return;
                 Vector next = velocity.clone().normalize().multiply(1.0 - turn).add(aim.normalize().multiply(turn));
                 arrow.setVelocity(next.normalize().multiply(Math.max(speed, velocity.length())));
-                at.getWorld().spawnParticle(Particle.DUST, at, 1, 0, 0, 0, 0, GREEN);
             }
 
             private Player pick(Location at, Vector velocity) {
@@ -90,5 +93,10 @@ public class CurveShot extends BowWeapon {
                 return best;
             }
         }.runTaskTimer(this.plugin, 1L, 1L);
+    }
+
+    @Override
+    protected void onArrowHit(Player shooter, AbstractArrow arrow, LivingEntity victim, EntityDamageByEntityEvent event) {
+        dev.cuda.zeroweapons.fx.WeaponFx.curveHit(victim);
     }
 }

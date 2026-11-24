@@ -25,6 +25,7 @@ public final class ZeroWeapons extends JavaPlugin implements Listener {
         this.saveDefaultConfig();
         this.saveResource("weapons.yml", false);
         this.cooldownManager = new CooldownManager();
+        dev.cuda.zeroweapons.fx.Fx.init(this);
         this.weaponManager = new WeaponManager(this);
 
         var pm = this.getServer().getPluginManager();
@@ -48,6 +49,7 @@ public final class ZeroWeapons extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        dev.cuda.zeroweapons.fx.Fx.shutdown();
         if (this.weaponManager != null) this.weaponManager.shutdown();
         instance = null;
     }

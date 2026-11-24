@@ -50,13 +50,15 @@ public class CobAxe extends CustomWeapon implements Listener {
         int radius = Math.max(1, this.cfg.getInt("clear_radius", 4));
         Block centre = player.getLocation().getBlock();
         int cleared = 0;
+        java.util.List<Location> webs = new java.util.ArrayList<>();
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {
                 for (int z = -radius; z <= radius; z++) {
                     if (x * x + y * y + z * z > radius * radius) continue;
                     Block block = centre.getRelative(x, y, z);
                     if (block.getType() == Material.COBWEB) {
-                        this.cut(block, cleared < 12);
+                        webs.add(block.getLocation());
+                        this.cut(block, false);
                         cleared++;
                     }
                 }
@@ -69,6 +71,8 @@ public class CobAxe extends CustomWeapon implements Listener {
             return;
         }
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_SHEEP_SHEAR, 1.0f, 0.8f);
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_ATTACK_SWEEP, 1.0f, 0.7f);
+        dev.cuda.zeroweapons.fx.WeaponFx.cobSweep(player, radius, webs);
         Msg.actionBar(player, Palette.b(Palette.COB, "CLEARED")
             + " <color:" + Palette.INK + ">" + cleared + " " + Palette.sc(cleared == 1 ? "web" : "webs") + "</color>");
         this.applyCooldown(player);
@@ -84,7 +88,8 @@ public class CobAxe extends CustomWeapon implements Listener {
         if (this.plugin.getWeaponManager().typeOf(player.getInventory().getItemInMainHand()) != this.type) return;
         if (!this.isEnabled() || this.inSpawn(player) || this.silenced(player)) return;
         event.setCancelled(true);
-        this.cut(block, true);
+        dev.cuda.zeroweapons.fx.WeaponFx.cobSnip(block, player);
+        this.cut(block, false);
         block.getWorld().playSound(block.getLocation(), Sound.ENTITY_SHEEP_SHEAR, 0.8f, 1.2f);
     }
 
@@ -129,6 +134,7 @@ public class CobAxe extends CustomWeapon implements Listener {
             }
             if (occupied) continue;
             block.setType(Material.COBWEB);
+            dev.cuda.zeroweapons.fx.WeaponFx.cobRegrow(at);
             it.remove();
         }
     }

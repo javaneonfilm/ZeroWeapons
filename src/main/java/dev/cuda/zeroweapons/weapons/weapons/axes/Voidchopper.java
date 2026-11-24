@@ -53,8 +53,7 @@ public class Voidchopper extends CustomWeapon implements Listener {
         }
 
         target.getWorld().playSound(target.getLocation(), Sound.BLOCK_END_PORTAL_FRAME_FILL, 1.0f, 0.6f);
-        target.getWorld().spawnParticle(Particle.DUST, target.getLocation().add(0, 1.0, 0), 24, 0.35, 0.6, 0.35, 0.0, VOID);
-        target.getWorld().spawnParticle(Particle.PORTAL, target.getLocation().add(0, 1.0, 0), 30, 0.3, 0.5, 0.3, 0.4);
+        dev.cuda.zeroweapons.fx.WeaponFx.voidLock(target, player, ticks);
         String secs = String.format("%.0f", ticks / 20.0);
         Msg.actionBar(player, Palette.b(Palette.VOID, "NO GAPS")
             + " <color:" + Palette.INK + ">" + target.getName() + " " + secs + "s</color>");
