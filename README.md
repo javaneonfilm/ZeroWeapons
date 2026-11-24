@@ -41,4 +41,4 @@ Permission: `zeroweapons.admin` (op by default).
 mvn clean package
 ```
 
-Jar ends up in `target/ZeroWeapons.jar`. Needs Java 21.
+
