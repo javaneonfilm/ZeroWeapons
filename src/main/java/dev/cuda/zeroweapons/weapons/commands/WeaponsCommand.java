@@ -64,7 +64,7 @@ public class WeaponsCommand implements CommandExecutor, TabCompleter {
                 try {
                     type = WeaponType.valueOf(args[1].toUpperCase(Locale.ROOT));
                 } catch (IllegalArgumentException e) {
-                    Msg.reply(sender, "<color:" + Palette.BAD + ">Unknown weapon '" + args[1] + "'.</color>");
+                    Msg.reply(sender, "<color:" + Palette.BAD + ">Unknown weapon '" + Msg.MM.escapeTags(args[1]) + "'.</color>");
                     return true;
                 }
                 Player target = args.length >= 3

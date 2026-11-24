@@ -39,7 +39,7 @@ public class FlamingBow extends BowWeapon {
         int seconds = Math.max(1, this.cfg.getInt("burn_seconds", 4));
         double perSecond = this.cfg.getDouble("burn_damage", 1.0);
         victim.setFireTicks(Math.max(victim.getFireTicks(), seconds * 20));
-        victim.setVisualFire(true);
+        victim.setVisualFire(net.kyori.adventure.util.TriState.TRUE);
         victim.getWorld().playSound(victim.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1.0f, 0.9f);
         victim.getWorld().spawnParticle(Particle.FLAME, victim.getLocation().add(0, 1.0, 0), 20, 0.3, 0.5, 0.3, 0.03);
 
@@ -56,7 +56,7 @@ public class FlamingBow extends BowWeapon {
                     || (victim instanceof Player p && !p.isOnline());
                 if (over) {
                     FlamingBow.this.burning.remove(victim.getUniqueId());
-                    if (victim.isValid()) victim.setVisualFire(false);
+                    if (victim.isValid()) victim.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
                     this.cancel();
                     return;
                 }
