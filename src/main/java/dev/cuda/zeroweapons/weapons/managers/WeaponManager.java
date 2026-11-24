@@ -129,13 +129,14 @@ public class WeaponManager {
     }
 
     private void register(CustomWeapon weapon) {
+        weapon.reloadConfig(this.getWeaponConfig(weapon.getType()));
         this.weapons.put(weapon.getType(), weapon);
     }
 
     public void reload() {
         this.addMissingWeapons();
         this.loadWeaponsConfig();
-        this.weapons.values().forEach(CustomWeapon::reloadConfig);
+        for (CustomWeapon weapon : this.weapons.values()) weapon.reloadConfig(this.getWeaponConfig(weapon.getType()));
     }
 
     /** Tells every weapon the server is going down, so nothing it built outlives it. */
@@ -165,8 +166,8 @@ public class WeaponManager {
     }
 
     public WeaponType typeOf(ItemStack item) {
-        if (item == null || !item.hasItemMeta()) return null;
-        String raw = item.getItemMeta().getPersistentDataContainer().get(this.weaponKey, PersistentDataType.STRING);
+        if (item == null || item.isEmpty()) return null;
+        String raw = item.getPersistentDataContainer().get(this.weaponKey, PersistentDataType.STRING);
         if (raw == null) return null;
         try {
             return WeaponType.valueOf(raw);

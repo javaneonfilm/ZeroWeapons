@@ -26,6 +26,7 @@ public class WeaponHitListener implements Listener {
         // An ability landing its own damage must not set abilities off. One check here
         // covers every weapon, including the ones that don't know about each other.
         if (CustomWeapon.isApplyingAbilityDamage()) return;
+        if (event.getCause() == org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_SWEEP_ATTACK) return;
 
         CustomWeapon weapon = this.plugin.getWeaponManager()
             .getWeaponFromItem(attacker.getInventory().getItemInMainHand());
@@ -42,6 +43,7 @@ public class WeaponHitListener implements Listener {
         }
 
         if (!weapon.isEnabled()) return;
+        if (event.getEntity() instanceof Player victim && RegionUtils.isInRegion(victim, region)) return;
         // Nullblade lock: the swing lands, the weapon's trick doesn't.
         if (dev.cuda.zeroweapons.weapons.managers.WeaponStates.silenced(attacker)) return;
         weapon.onHit(attacker, event.getEntity(), event);

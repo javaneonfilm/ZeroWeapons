@@ -59,6 +59,7 @@ public abstract class BowWeapon extends CustomWeapon implements Listener {
         if (!(arrow.getShooter() instanceof Player shooter)) return;
         if (!(event.getEntity() instanceof LivingEntity victim) || victim.equals(shooter)) return;
         if (isApplyingAbilityDamage() || !this.isEnabled()) return;
+        if (victim instanceof Player victimPlayer && this.inSpawn(victimPlayer)) return;
         this.onArrowHit(shooter, arrow, victim, event);
     }
 }

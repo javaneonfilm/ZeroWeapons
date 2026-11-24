@@ -80,4 +80,9 @@ public class Voidchopper extends CustomWeapon implements Listener {
     public void onDeath(PlayerDeathEvent event) {
         this.locked.remove(event.getEntity().getUniqueId());
     }
+
+    @Override
+    public void forgetPlayer(UUID playerId) {
+        this.locked.remove(playerId);
+    }
 }

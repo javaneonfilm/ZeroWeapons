@@ -2,7 +2,6 @@ package dev.cuda.zeroweapons.weapons.weapons;
 
 import dev.cuda.zeroweapons.ZeroWeapons;
 import dev.cuda.zeroweapons.weapons.WeaponType;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -11,9 +10,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -32,18 +29,18 @@ public abstract class CustomWeapon {
     protected final ZeroWeapons plugin;
     protected final WeaponType type;
     protected final NamespacedKey weaponKey;
+    private final NamespacedKey cooldownKey;
     protected ConfigurationSection cfg;
 
     public CustomWeapon(ZeroWeapons plugin, WeaponType type) {
         this.plugin = plugin;
         this.type = type;
         this.weaponKey = new NamespacedKey(plugin, "weapon_type");
-        this.reloadConfig();
+        this.cooldownKey = new NamespacedKey(plugin, "cooldown_" + type.configKey());
     }
 
-    public void reloadConfig() {
-        File file = new File(this.plugin.getDataFolder(), "weapons.yml");
-        this.cfg = YamlConfiguration.loadConfiguration(file).getConfigurationSection("weapons." + this.type.configKey());
+    public void reloadConfig(ConfigurationSection section) {
+        this.cfg = section;
     }
 
     public WeaponType getType() {
@@ -75,6 +72,9 @@ public abstract class CustomWeapon {
     public void onShutdown() {
     }
 
+    public void forgetPlayer(java.util.UUID playerId) {
+    }
+
     public void onHit(Player player, Entity victim, EntityDamageByEntityEvent event) {
     }
 
@@ -86,6 +86,7 @@ public abstract class CustomWeapon {
         String materialName = this.cfg.getString("material", "NETHERITE_SWORD");
         try {
             mat = Material.valueOf(materialName);
+            if (!mat.isItem() || mat.isAir()) throw new IllegalArgumentException(materialName);
         } catch (IllegalArgumentException e) {
             this.plugin.getLogger().warning("Invalid material '" + materialName + "' for weapon " + this.type.configKey());
             mat = Material.NETHERITE_SWORD;
@@ -96,7 +97,7 @@ public abstract class CustomWeapon {
         meta.displayName(MM.deserialize(nameMM).decoration(TextDecoration.ITALIC, false));
         meta.lore(this.buildLore());
         for (var e : this.enchants().entrySet()) {
-            Enchantment ench = Registry.ENCHANTMENT.get(NamespacedKey.minecraft(e.getKey()));
+            Enchantment ench = io.papermc.paper.registry.RegistryAccess.registryAccess().getRegistry(io.papermc.paper.registry.RegistryKey.ENCHANTMENT).get(NamespacedKey.minecraft(e.getKey()));
             if (ench != null) {
                 meta.addEnchant(ench, e.getValue(), true);
             } else {
@@ -220,7 +221,7 @@ public abstract class CustomWeapon {
 
     /** The vanilla cooldown group this weapon's items belong to. */
     public NamespacedKey cooldownKey() {
-        return new NamespacedKey(this.plugin, "cooldown_" + this.type.configKey());
+        return this.cooldownKey;
     }
 
     /**

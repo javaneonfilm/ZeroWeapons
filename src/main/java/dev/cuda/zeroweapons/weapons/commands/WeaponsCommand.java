@@ -64,7 +64,7 @@ public class WeaponsCommand implements CommandExecutor, TabCompleter {
                 try {
                     type = WeaponType.valueOf(args[1].toUpperCase(Locale.ROOT));
                 } catch (IllegalArgumentException e) {
-                    Msg.reply(sender, "<color:" + Palette.BAD + ">Unknown weapon '" + args[1] + "'.</color>");
+                    Msg.reply(sender, "<color:" + Palette.BAD + ">Unknown weapon '" + Msg.MM.escapeTags(args[1]) + "'.</color>");
                     return true;
                 }
                 Player target = args.length >= 3
@@ -79,7 +79,9 @@ public class WeaponsCommand implements CommandExecutor, TabCompleter {
                     Msg.reply(sender, Palette.l(Palette.BAD, "That weapon has no config entry."));
                     return true;
                 }
-                target.getInventory().addItem(item);
+                for (ItemStack leftover : target.getInventory().addItem(item).values()) {
+                    target.getWorld().dropItem(target.getLocation(), leftover, dropped -> dropped.setOwner(target.getUniqueId()));
+                }
                 Msg.replySuccess(sender, "Gave " + type.displayName() + " to " + target.getName() + ".");
                 Msg.send(target, Palette.l(Palette.INK, "You received ") + type.coloredName());
             }
@@ -105,7 +107,10 @@ public class WeaponsCommand implements CommandExecutor, TabCompleter {
         }
         if (args.length == 3 && args[0].equalsIgnoreCase("give")) {
             List<String> names = new ArrayList<>();
-            for (Player online : this.plugin.getServer().getOnlinePlayers()) names.add(online.getName());
+            for (Player online : this.plugin.getServer().getOnlinePlayers()) {
+                if (sender instanceof Player viewer && !viewer.canSee(online)) continue;
+                if (online.getName().toLowerCase(Locale.ROOT).startsWith(args[2].toLowerCase(Locale.ROOT))) names.add(online.getName());
+            }
             return names;
         }
         return List.of();

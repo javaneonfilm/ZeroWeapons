@@ -9,7 +9,10 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -39,7 +42,7 @@ public class FlamingBow extends BowWeapon {
         int seconds = Math.max(1, this.cfg.getInt("burn_seconds", 4));
         double perSecond = this.cfg.getDouble("burn_damage", 1.0);
         victim.setFireTicks(Math.max(victim.getFireTicks(), seconds * 20));
-        victim.setVisualFire(true);
+        victim.setVisualFire(net.kyori.adventure.util.TriState.TRUE);
         victim.getWorld().playSound(victim.getLocation(), Sound.ITEM_FIRECHARGE_USE, 1.0f, 0.9f);
         victim.getWorld().spawnParticle(Particle.FLAME, victim.getLocation().add(0, 1.0, 0), 20, 0.3, 0.5, 0.3, 0.03);
 
@@ -53,10 +56,10 @@ public class FlamingBow extends BowWeapon {
                 Long until = FlamingBow.this.burning.get(victim.getUniqueId());
                 boolean over = until == null || System.currentTimeMillis() >= until + 50
                     || !victim.isValid() || victim.isDead() || victim.isInWater()
-                    || (victim instanceof Player p && !p.isOnline());
+                    || (victim instanceof Player p && (!p.isOnline() || FlamingBow.this.inSpawn(p)));
                 if (over) {
                     FlamingBow.this.burning.remove(victim.getUniqueId());
-                    if (victim.isValid()) victim.setVisualFire(false);
+                    victim.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
                     this.cancel();
                     return;
                 }
@@ -64,5 +67,21 @@ public class FlamingBow extends BowWeapon {
                 victim.getWorld().spawnParticle(Particle.FLAME, victim.getLocation().add(0, 1.0, 0), 8, 0.25, 0.4, 0.25, 0.02);
             }
         }.runTaskTimer(this.plugin, 20L, 20L);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        if (this.burning.remove(event.getPlayer().getUniqueId()) != null) {
+            event.getPlayer().setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
+        }
+    }
+
+    @Override
+    public void onShutdown() {
+        for (UUID id : this.burning.keySet()) {
+            Entity entity = this.plugin.getServer().getEntity(id);
+            if (entity != null) entity.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
+        }
+        this.burning.clear();
     }
 }
