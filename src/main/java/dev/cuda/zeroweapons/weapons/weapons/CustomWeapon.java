@@ -32,12 +32,14 @@ public abstract class CustomWeapon {
     protected final ZeroWeapons plugin;
     protected final WeaponType type;
     protected final NamespacedKey weaponKey;
+    private final NamespacedKey cooldownKey;
     protected ConfigurationSection cfg;
 
     public CustomWeapon(ZeroWeapons plugin, WeaponType type) {
         this.plugin = plugin;
         this.type = type;
         this.weaponKey = new NamespacedKey(plugin, "weapon_type");
+        this.cooldownKey = new NamespacedKey(plugin, "cooldown_" + type.configKey());
         this.reloadConfig();
     }
 

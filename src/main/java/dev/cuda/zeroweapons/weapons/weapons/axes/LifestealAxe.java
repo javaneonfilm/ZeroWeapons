@@ -53,4 +53,9 @@ public class LifestealAxe extends CustomWeapon {
         Msg.actionBar(player, Palette.b(Palette.LEECH, "LIFESTEAL")
             + " <color:" + Palette.INK + ">+" + String.format("%.1f", taken / 2.0) + " " + Palette.sc("hearts") + "</color>");
     }
+
+    @Override
+    public void forgetPlayer(UUID playerId) {
+        this.crits.remove(playerId);
+    }
 }

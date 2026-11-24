@@ -65,4 +65,9 @@ public class Dreadcleaver extends CustomWeapon {
         living.getWorld().spawnParticle(Particle.EXPLOSION, living.getLocation().add(0, 1.0, 0), 1);
         living.getWorld().spawnParticle(Particle.CRIT, living.getLocation().add(0, 1.0, 0), 25, 0.4, 0.5, 0.4, 0.3);
     }
+
+    @Override
+    public void forgetPlayer(UUID playerId) {
+        this.counts.remove(playerId);
+    }
 }
