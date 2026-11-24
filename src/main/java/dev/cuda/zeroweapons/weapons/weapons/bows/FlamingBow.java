@@ -53,7 +53,7 @@ public class FlamingBow extends BowWeapon {
                 Long until = FlamingBow.this.burning.get(victim.getUniqueId());
                 boolean over = until == null || System.currentTimeMillis() >= until + 50
                     || !victim.isValid() || victim.isDead() || victim.isInWater()
-                    || (victim instanceof Player p && !p.isOnline());
+                    || (victim instanceof Player p && (!p.isOnline() || FlamingBow.this.inSpawn(p)));
                 if (over) {
                     FlamingBow.this.burning.remove(victim.getUniqueId());
                     if (victim.isValid()) victim.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
