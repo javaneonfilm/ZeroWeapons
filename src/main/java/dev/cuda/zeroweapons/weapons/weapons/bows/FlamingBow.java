@@ -9,7 +9,10 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -56,7 +59,7 @@ public class FlamingBow extends BowWeapon {
                     || (victim instanceof Player p && (!p.isOnline() || FlamingBow.this.inSpawn(p)));
                 if (over) {
                     FlamingBow.this.burning.remove(victim.getUniqueId());
-                    if (victim.isValid()) victim.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
+                    victim.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
                     this.cancel();
                     return;
                 }
@@ -64,5 +67,21 @@ public class FlamingBow extends BowWeapon {
                 victim.getWorld().spawnParticle(Particle.FLAME, victim.getLocation().add(0, 1.0, 0), 8, 0.25, 0.4, 0.25, 0.02);
             }
         }.runTaskTimer(this.plugin, 20L, 20L);
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        if (this.burning.remove(event.getPlayer().getUniqueId()) != null) {
+            event.getPlayer().setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
+        }
+    }
+
+    @Override
+    public void onShutdown() {
+        for (UUID id : this.burning.keySet()) {
+            Entity entity = this.plugin.getServer().getEntity(id);
+            if (entity != null) entity.setVisualFire(net.kyori.adventure.util.TriState.NOT_SET);
+        }
+        this.burning.clear();
     }
 }
