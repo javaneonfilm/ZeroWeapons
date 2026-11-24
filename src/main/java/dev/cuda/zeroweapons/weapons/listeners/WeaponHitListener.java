@@ -43,6 +43,7 @@ public class WeaponHitListener implements Listener {
         }
 
         if (!weapon.isEnabled()) return;
+        if (event.getEntity() instanceof Player victim && RegionUtils.isInRegion(victim, region)) return;
         // Nullblade lock: the swing lands, the weapon's trick doesn't.
         if (dev.cuda.zeroweapons.weapons.managers.WeaponStates.silenced(attacker)) return;
         weapon.onHit(attacker, event.getEntity(), event);
